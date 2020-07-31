@@ -3,8 +3,10 @@ frames = require("frames1")
 require ("bit")
 -- love.graphics.setDefaultFilter("nearest", "nearest")
 -- 
-IMAGE_WIDTH = 960
-IMAGE_HEIGHT = 720
+-- IMAGE_WIDTH = 960
+-- IMAGE_HEIGHT = 720
+IMAGE_WIDTH = 800
+IMAGE_HEIGHT = 800
 
 canvas = love.graphics.newCanvas(IMAGE_WIDTH, IMAGE_HEIGHT)
 -- canvas = love.graphics.newCanvas(1280, 720)
@@ -14,7 +16,9 @@ images = {}
 function love.load()
     -- table.insert(images, love.graphics.newImage("diff0.jpg"))
     -- table.insert(images, love.graphics.newImage("diff0-min.jpg"))
-    for i = 0, 11 do
+    -- for i = 0, 11 do
+    for i = 0, 2 do
+        print(i)
         -- f_name = "diff"..tostring(i).."-min.jpg"
         f_name = "diff"..tostring(i)..".jpg"
         -- f_name = "fuck/min/diff"..tostring(i).."-min.jpg"
@@ -46,9 +50,11 @@ st = 0
 
 raw_image = nil
 
+
 function love.update(dt)
     st = st + dt
-    if st >= 0.06 then  -- 0.06
+    if st >= 0.033 then  -- 0.06
+    -- if st >= 0.06 then  -- 0.06
         st = 0
         frame = frame + 1
         if frame > #frames then
@@ -62,7 +68,9 @@ function love.update(dt)
             -- love.graphics.setColor(255, 255, 255, 255)
             -- love.graphics.setColor(255, 255, 255, 255)
             len = #data
+            local offset = 0
             for idx = 1, len, 2 do
+                -- offset = offset + 10
                 num_1 = data[idx]
                 num_2 = data[idx + 1]
                 index = bit.band(bit.rshift(num_1, 22), 0x1f)
@@ -92,7 +100,8 @@ function love.update(dt)
                         -- print(block_width, x1, w, valid_width)
                         block_width = block_width - valid_width
                         quad = love.graphics.newQuad(x1, y1, valid_width, 8, w, h)
-                        love.graphics.draw(img, quad, x, y)
+                        -- love.graphics.draw(img, quad, x, y+offset)
+                        love.graphics.rectangle('line', x, y, valid_width, 8)
                         x = x + valid_width
                         x1 = x1 + valid_width
                         if x >= IMAGE_WIDTH then  -- 目标图片宽度
@@ -105,7 +114,8 @@ function love.update(dt)
                         end
                     else
                         quad = love.graphics.newQuad(x1, y1, block_width, 8, w, h)
-                        love.graphics.draw(img, quad, x, y)
+                        love.graphics.draw(img, quad, x, y+offset)
+                        love.graphics.rectangle('line', x, y, block_width, 8)
                         block_width = 0
                     end
                 end
@@ -132,7 +142,13 @@ function love.update(dt)
             --
             --
         end)
-        -- raw_image = love.graphics.newImage(string.format("assets/%04d.jpg", frame))
+        -- local canvasData = canvas:newImageData()
+        -- canvasData:encode("png", tostring(frame)..".png")
+        -- if frame == 20 then
+            -- local canvasData = canvas:newImageData()
+            -- canvasData:encode("png", "pic.png")
+        -- end
+        raw_image = love.graphics.newImage(string.format("imgs/core_s_%05d.jpg", frame - 1))
     end
 end
 
@@ -145,10 +161,12 @@ function love.draw()
     -- love.graphics.setColor(255, 255, 255, 255)
     -- love.graphics.setColor(0, 0, 0, 255)
     -- love.graphics.setBlendMode("alpha", "premultiplied")
+    if raw_image then
+        love.graphics.draw(raw_image, 500, 0, 0, 0.5, 0.5)
+    end
     love.graphics.draw(canvas, 0, 0, 0, 1, 1)
-    -- if raw_image then
-        -- love.graphics.draw(raw_image, 800, 0, 0, 0.6, 0.6)
-    -- end
+    -- love.graphics.draw(canvas, -100, -500, 0, 1, 5)
+    -- love.graphics.draw(canvas, 0, 0, 0, 0.5, 0.5)
     -- data = frames[frame]
     --         -- love.graphics.setColor(0, 0, 0, 255)
     --         for _, p_f in ipairs(data) do
