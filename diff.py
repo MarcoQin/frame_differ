@@ -12,6 +12,17 @@ block_width = 4  # 8
 block_height = 8
 
 
+"""
+    image:
+          0  y y y y y y y y
+          x
+          x
+          x
+          x
+          x
+"""
+
+
 def parse(img, img1, frame_index):
     print("parse frame ", frame_index)
     width = len(img)
@@ -24,17 +35,17 @@ def parse(img, img1, frame_index):
 
     has_write_new = False
 
-    for x in range(0, width, block_width):
-        for y in range(0, height, block_height):
+    for x in range(0, width, block_height):
+        for y in range(0, height, block_width):
             diff = False
-            for i in range(block_width):
+            for i in range(block_height):
                 if diff:
                     break
-                for j in range(block_height):
+                for j in range(block_width):
                     if diff:
                         break
-                    # color = d[x + i][y + j]
-                    color = d[y + j][x + i]
+                    color = d[x + i][y + j]
+                    # color = d[y + j][x + i]
                     for rgb in color:
                         # if rgb > 1:
                         if rgb > 0:
@@ -46,12 +57,12 @@ def parse(img, img1, frame_index):
                     has_write_new = True
                 # pixel_block = 0
                 pixel_block = np.zeros([block_height, block_width, 3], dtype=np.uint8)
-                # for i in range(block_width):
-                    # for j in range(block_height):
-                        # pixel_block[i][j] = img1[x + i][y + j]
-                for j in range(block_height):
-                    for i in range(block_width):
-                        pixel_block[j][i] = img1[y + j][x + i]
+                for i in range(block_height):
+                    for j in range(block_width):
+                        pixel_block[i][j] = img1[x + i][y + j]
+                # for j in range(block_height):
+                    # for i in range(block_width):
+                        # pixel_block[j][i] = img1[y + j][x + i]
                 new_data = ((frame_index, x, y), pixel_block)
                 pixels.append(new_data)
 
@@ -84,27 +95,27 @@ def save_img():
         x_1 = 0
         y_1 = 0
         for block in new:
-            if x_1 >= 2048:
-                x_1 = 0
-                y_1 += block_height
+            if y_1 >= 2048:
+                y_1 = 0
+                x_1 += block_height
             frame_info = block[0]
             frame_index, x_diff, y_diff = frame_info
             if frame_index not in rt:
                 rt[frame_index] = []
-            # rt[frame_index].append("%s,%s,%s,%s,%s" % (img_index, x_diff, y_diff, x_1, y_1))
-            rt[frame_index].append("%s,%s,%s,%s,%s" % (img_index, y_diff, x_diff, y_1, x_1))
+            rt[frame_index].append("%s,%s,%s,%s,%s" % (img_index, x_diff, y_diff, x_1, y_1))
+            # rt[frame_index].append("%s,%s,%s,%s,%s" % (img_index, y_diff, x_diff, y_1, x_1))
             # y_1 += 8
             # continue
             img_block = block[1]
 
-            # for x_x, data in enumerate(img_block):
-                # for y_y, pi in enumerate(data):
-                    # image[x_1 + x_x][y_1 + y_y] = pi
-            for y_y, data in enumerate(img_block):
-                for x_x, pi in enumerate(data):
-                    image[y_1 + y_y][x_1 + x_x] = pi
+            for x_x, data in enumerate(img_block):
+                for y_y, pi in enumerate(data):
+                    image[x_1 + x_x][y_1 + y_y] = pi
+            # for y_y, data in enumerate(img_block):
+                # for x_x, pi in enumerate(data):
+                    # image[y_1 + y_y][x_1 + x_x] = pi
 
-            x_1 += block_width
+            y_1 += block_width
         cv2.imwrite("diff%s.jpg" % img_index, image)
         img_index += 1
     with open("result.json", "w") as f:

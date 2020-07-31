@@ -50,14 +50,27 @@ for k in keys:
     frames = data[str(k)]
     new_frame = []
     adjusted_points = []
+
+    # reverted_frames = {}  # x: []
+    # for p_frame in frames:
+        # index, x, y, diff_x, diff_y = [int(x) for x in p_frame.split(',')]
+        # if x not in reverted_frames:
+            # reverted_frames[x] = []
+        # reverted_frames[x].append([index, x, y, diff_x, diff_y])
+
+    # frames = []
+    # for k in sorted(reverted_frames.keys()):
+        # frames.extend(reverted_frames[k])
+
     for p_frame in frames:
         index, x, y, diff_x, diff_y = [int(x) for x in p_frame.split(',')]
+        # index, x, y, diff_x, diff_y = p_frame
         if adjusted_points:
             last_point = adjusted_points[-1]
             old_index, old_x, old_y, old_diff_x, old_diff_y = last_point
             if index == old_index:  # 同一张diff图片
                 if x == old_x:  # 同一行
-                    if (old_y + block_base_height == y):
+                    if (old_y + block_base_width == y):
                         #  print(old_y, y)
                         #  print(old_diff_x, old_diff_y, diff_x, diff_y)
                         # 相邻的块儿
@@ -70,8 +83,17 @@ for k in keys:
                         adjusted_points = []
                         adjusted_points.append((index, x, y, diff_x, diff_y))
                 else:  # 不同一行
-                    if (old_x + block_base_width == x):  # 相邻的行
-                        if (old_y + block_base_height == TARGET_IMAGE_WIDTH and y == 0):  # TARGET_IMAGE_WIDTH 是目标图片宽度, 相邻行，回车转接
+                    # 要不直接把不同行的拆了吧。不同行的老出问题。
+                    # print('not in one line')
+                    # first_index, first_x, first_y, first_diff_x, first_diff_y = adjusted_points[0]
+                    # num_1, num_2 = check(first_index, first_x, first_y, first_diff_x, first_diff_y, len(adjusted_points) * block_base_width)
+                    # new_frame.append(num_1)
+                    # new_frame.append(num_2)
+                    # adjusted_points = []
+                    # adjusted_points.append((index, x, y, diff_x, diff_y))
+                    # continue
+                    if (old_x + block_base_height == x):  # 相邻的行
+                        if (old_y + block_base_width == TARGET_IMAGE_WIDTH and y == 0):  # TARGET_IMAGE_WIDTH 是目标图片宽度, 相邻行，回车转接
                             adjusted_points.append((index, x, y, diff_x, diff_y))
                         else:  # 相邻行，回车不转接
                             first_index, first_x, first_y, first_diff_x, first_diff_y = adjusted_points[0]

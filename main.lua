@@ -54,7 +54,7 @@ raw_image = nil
 function love.update(dt)
     st = st + dt
     if st >= 0.033 then  -- 0.06
-    -- if st >= 0.06 then  -- 0.06
+    -- if st >= 1 then  -- 0.06
         st = 0
         frame = frame + 1
         if frame > #frames then
@@ -100,8 +100,8 @@ function love.update(dt)
                         -- print(block_width, x1, w, valid_width)
                         block_width = block_width - valid_width
                         quad = love.graphics.newQuad(x1, y1, valid_width, 8, w, h)
-                        -- love.graphics.draw(img, quad, x, y+offset)
-                        love.graphics.rectangle('line', x, y, valid_width, 8)
+                        love.graphics.draw(img, quad, x, y+offset)
+                        -- love.graphics.rectangle('line', x, y, valid_width, 8)
                         x = x + valid_width
                         x1 = x1 + valid_width
                         if x >= IMAGE_WIDTH then  -- 目标图片宽度
@@ -115,7 +115,7 @@ function love.update(dt)
                     else
                         quad = love.graphics.newQuad(x1, y1, block_width, 8, w, h)
                         love.graphics.draw(img, quad, x, y+offset)
-                        love.graphics.rectangle('line', x, y, block_width, 8)
+                        -- love.graphics.rectangle('line', x, y, block_width, 8)
                         block_width = 0
                     end
                 end
